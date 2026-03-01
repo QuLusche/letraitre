@@ -1,0 +1,14 @@
+name: LeTraitre
+version: '0.1'
+main: fr.qulusche.letraitre.Main
+api-version: '1.21'
+load: STARTUP
+authors: [ QuLusche ]
+
+commands:
+  start:
+    description: Lance le premier tour de jeu
+    usage: /start
+  vote:
+    description: Vote pour désigner le traitre
+    usage: /vote <player>
