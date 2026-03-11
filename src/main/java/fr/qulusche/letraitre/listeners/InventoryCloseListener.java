@@ -1,7 +1,7 @@
 package fr.qulusche.letraitre.listeners;
 
 import fr.qulusche.letraitre.Main;
-import fr.qulusche.letraitre.VoteManager;
+import fr.qulusche.letraitre.game.VoteManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

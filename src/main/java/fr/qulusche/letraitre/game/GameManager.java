@@ -1,5 +1,6 @@
-package fr.qulusche.letraitre;
+package fr.qulusche.letraitre.game;
 
+import fr.qulusche.letraitre.Main;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,10 +27,13 @@ public class GameManager {
 	@Getter
 	private UUID traitor;
 
+	@Getter
+	private String traitorName;
+
 	public GameManager(Main plugin) {
 		this.plugin = plugin;
 		this.voteManager = new VoteManager(plugin, this);
-		this.logger = Logger.getLogger("GameManager");
+		this.logger = plugin.getLogger();
 	}
 
 	public void chooseTraitor() {
@@ -39,14 +43,16 @@ public class GameManager {
 				players.add(player);
 			}
 		}
+
 		if (players.size() < 2) {
-			traitor = null;
-			throw  new IllegalStateException("Not enough players to choose a traitor. At least 2 players are required.");
+			Bukkit.broadcastMessage(ChatColor.RED + "Il faut au moins 2 joueurs pour commencer une partie !");
+			return;
 		}
 
 		Player chosen = players.get(plugin.getRandom().nextInt(players.size()));
 		chosen.sendTitle(ChatColor.GRAY+"Attention...", ChatColor.RED+"...tu es le traitre !", 10, 70, 20);
 		traitor = chosen.getUniqueId();
+		traitorName = chosen.getName();
 
 		for (Player player : players) {
 			if (!player.getUniqueId().equals(traitor)) {
@@ -79,6 +85,7 @@ public class GameManager {
 		}
 
 		traitor = null;
+		traitorName = null;
 
 		chooseTraitor();
 	}
@@ -110,12 +117,14 @@ public class GameManager {
 				logger.info("Penalized player: " + player.getName() + " (new max health: " + player.getMaxHealth() + ")");
 			}
 			else {
+				int rewardDiamonds = 3;
+
 				player.sendMessage(ChatColor.GREEN + "Tu n'as pas été découvert comme traitre !");
 
-				player.getInventory().addItem(new ItemStack(Material.DIAMOND, 3));
+				player.getInventory().addItem(new ItemStack(Material.DIAMOND, rewardDiamonds));
 				player.getInventory().addItem(getMoobEgg());
 
-				player.sendMessage(ChatColor.GREEN + "Tu as reçu 5 diamants et un oeuf de mob en récompense !");
+				player.sendMessage(ChatColor.GREEN + "Tu as reçu "+rewardDiamonds+" diamants et un oeuf de mob en récompense !");
 				logger.info("Rewarded traitor: " + player.getName());
 			}
 		}

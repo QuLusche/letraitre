@@ -1,8 +1,10 @@
-package fr.qulusche.letraitre;
+package fr.qulusche.letraitre.game;
 
+import fr.qulusche.letraitre.Main;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +39,7 @@ public class VoteManager {
 		this.plugin = plugin;
 		this.gameManager = gameManager;
 
-		this.logger = Logger.getLogger("VoteManager");
+		this.logger = plugin.getLogger();
 	}
 
 	public boolean addVoteWaiting(UUID voter) {
@@ -92,18 +94,17 @@ public class VoteManager {
 	private void startVote() {
 		voteSend = 0;
 		voteInProgress = true;
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			player.sendMessage(org.bukkit.ChatColor.RED+"Attention, un vote est arrive dans 10 secondes pour éliminer un joueur !");
 
-			if (player.getGameMode() == SPECTATOR) return;
+		List<Player> voters = (List<Player>) Bukkit.getOnlinePlayers().stream()
+				.filter(p -> p.getGameMode() != SPECTATOR)
+				.toList();
 
-			plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-				if (player == null)	return;
+		voteSend = voters.size();
 
-				voteSend++;
-
+		for (Player player : voters) {
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
 				openVoteMenu(player);
-			}, 20*10);
+			}, 20 * 10);
 		}
 	}
 
@@ -115,7 +116,7 @@ public class VoteManager {
 
 		int i = 0;
 		for (Player target : Bukkit.getOnlinePlayers()) {
-			if (player.getGameMode() == SPECTATOR) continue;
+			if (target.getGameMode() == SPECTATOR) continue;
 			if (target.getUniqueId().equals(player.getUniqueId())) continue;
 
 			ItemStack head = createPlayerHead(target);
@@ -181,6 +182,10 @@ public class VoteManager {
 	}
 
 	public void vote(Player voter, UUID votedPlayerUUID) {
+		if (hasVoted(voter)) return;
+
+		voter.playSound(voter.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
+
 		voteDone++;
 		votes.put(voter.getUniqueId(), votedPlayerUUID);
 		logger.info("Player " + voter.getName() + " voted for player with UUID " + votedPlayerUUID);

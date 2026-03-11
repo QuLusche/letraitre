@@ -1,7 +1,7 @@
 package fr.qulusche.letraitre.listeners;
 
 import fr.qulusche.letraitre.Main;
-import fr.qulusche.letraitre.VoteManager;
+import fr.qulusche.letraitre.game.VoteManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,17 +17,14 @@ public class InventoryClickListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		// Vérifier si c'est le menu de vote
 		if (!event.getView().getTitle().startsWith(VoteManager.TITLE_VOTE)) {
 			return;
 		}
 
-		// Annuler l'événement pour empêcher la prise d'items
 		event.setCancelled(true);
 
 		ItemStack clickedItem = event.getCurrentItem();
 
-		// Vérifier si l'item cliqué est une tête de joueur
 		if (clickedItem == null || clickedItem.getType() != Material.PLAYER_HEAD) {
 			return;
 		}
@@ -40,10 +37,8 @@ public class InventoryClickListener implements Listener {
 
 			Main.plugin.getGameManager().getVoteManager().vote(voter, votedPlayerUUID);
 
-			// Fermer le menu
 			voter.closeInventory();
 
-			// Message de confirmation
 			voter.sendMessage(ChatColor.GREEN+"Tu as voté pour " + meta.getOwningPlayer().getName() +ChatColor.GREEN+ " !");
 		}
 	}

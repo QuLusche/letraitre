@@ -1,6 +1,6 @@
 package fr.qulusche.letraitre.commands;
 
-import fr.qulusche.letraitre.GameManager;
+import fr.qulusche.letraitre.game.GameManager;
 import fr.qulusche.letraitre.Main;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

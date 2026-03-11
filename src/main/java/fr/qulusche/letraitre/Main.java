@@ -2,6 +2,7 @@ package fr.qulusche.letraitre;
 
 import fr.qulusche.letraitre.commands.StartCommand;
 import fr.qulusche.letraitre.commands.VoteCommand;
+import fr.qulusche.letraitre.game.GameManager;
 import fr.qulusche.letraitre.listeners.InventoryClickListener;
 import fr.qulusche.letraitre.listeners.InventoryCloseListener;
 import lombok.Getter;
